@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioMatch Pro - Facial Recognition</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Face API (Vlad Mandic fork - modern and maintained) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i data-lucide="scan-face" class="icon-lg"></i>
+                <h1>BioMatch <span>Pro</span></h1>
+            </div>
+            <div class="status-badge" id="model-status">
+                <span class="pulse"></span>
+                <span id="status-text">Initializing AI Models...</span>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="main-grid">
+            
+            <!-- Reference Image Panel -->
+            <section class="panel glass-panel">
+                <div class="panel-header">
+                    <h2><i data-lucide="user-check"></i> 1. Reference Subject</h2>
+                    <p>Upload the target face you want to find.</p>
+                </div>
+                
+                <div class="upload-area" id="reference-upload-area">
+                    <input type="file" id="reference-input" accept="image/*" hidden>
+                    <label for="reference-input" class="upload-label">
+                        <i data-lucide="upload-cloud"></i>
+                        <span>Click or Drag Reference Image</span>
+                    </label>
+                    <div class="preview-container" id="reference-preview-container" style="display: none;">
+                        <img id="reference-img" src="" alt="Reference">
+                        <button class="clear-btn" id="clear-ref" title="Clear Image"><i data-lucide="x"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Target Images Panel -->
+            <section class="panel glass-panel">
+                <div class="panel-header">
+                    <h2><i data-lucide="users"></i> 2. Target Database</h2>
+                    <p>Upload a group photo or multiple images to search within.</p>
+                </div>
+                
+                <div class="upload-area" id="target-upload-area">
+                    <input type="file" id="target-input" accept="image/*" multiple hidden>
+                    <label for="target-input" class="upload-label">
+                        <i data-lucide="images"></i>
+                        <span>Click to Select Target Photos</span>
+                    </label>
+                    <div class="target-gallery" id="target-gallery" style="display: none;">
+                        <!-- Target image thumbnails will be injected here -->
+                    </div>
+                    <button class="clear-btn" id="clear-targets" style="display: none;" title="Clear All"><i data-lucide="x"></i></button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <button id="start-match-btn" class="primary-btn glass-btn" disabled>
+                <i data-lucide="cpu"></i> Start Biometric Match
+            </button>
+        </div>
+
+        <!-- Scanning Overlay (Hidden by default) -->
+        <div id="scanning-overlay" class="scanning-overlay">
+            <div class="scanner-container">
+                <div class="scanner-box">
+                    <img id="scan-image" src="" alt="Scanning..." />
+                    <div class="laser"></div>
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                </div>
+                <h3 class="scanning-text">Analyzing Facial Features...</h3>
+                <p id="scanning-progress">Extracting 128-D vectors</p>
+            </div>
+        </div>
+
+        <!-- Results Modal (Hidden by default) -->
+        <div id="results-modal" class="results-modal">
+            <div class="modal-content glass-panel">
+                <button class="close-modal-btn" id="close-results"><i data-lucide="x"></i></button>
+                <div class="modal-header">
+                    <h2>Match Results</h2>
+                    <span id="match-count" class="badge">0 Matches</span>
+                </div>
+                
+                <!-- If no match found -->
+                <div id="no-match-state" class="empty-state" style="display: none;">
+                    <i data-lucide="user-x" class="icon-xl"></i>
+                    <h3>No Matches Found</h3>
+                    <p>The reference subject was not found in the target database.</p>
+                </div>
+
+                <!-- Results Grid (Cropped faces and full images) -->
+                <div id="results-grid" class="results-grid">
+                    <!-- Results dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Application Logic -->
+    <script src="app.js"></script>
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
